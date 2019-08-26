@@ -7,6 +7,31 @@
 //
 
 import SwiftUI
+import Combine
+
+class DataSource: ObservableObject {
+
+    var willChange = PassthroughSubject<Void, Never>()
+    var images = [String]()
+
+    init() {
+
+        let fm = FileManager.default
+
+        guard let path = Bundle.main.resourcePath else { return }
+        guard let items = try? fm.contentsOfDirectory(atPath: path) else { return }
+
+        for item in items {
+            if item.hasPrefix("nssl") {
+                images.append(item)
+            }
+        }
+
+        willChange.send(())
+
+    }
+
+}
 
 struct DetailView: View {
     @State private var hidesNavBar = false
@@ -27,13 +52,15 @@ struct DetailView: View {
 
 struct ContentView: View {
     
-    let images = ["nssl0033.jpg", "nssl0034.jpg", "nssl0041.jpg", "nssl0042.jpg"]
+    // ObjectBinding should be used here to prevent reloading of DataSource every time this struct changes
+    // But ObjectBidning is deprecated
+    var dataSource = DataSource()
     
     var body: some View {
         NavigationView {
             List {
                 
-                ForEach(images, id: \.self) { image in
+                ForEach(dataSource.images, id: \.self) { image in
                     NavigationLink(
                         destination: DetailView(selectedImage: image)
                     ) {
