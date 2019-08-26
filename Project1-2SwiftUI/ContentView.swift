@@ -33,6 +33,10 @@ class DataSource: ObservableObject {
 
 }
 
+extension String: Identifiable {
+    public var id: String { self }
+}
+
 struct DetailView: View {
     @State private var hidesNavBar = false
     var selectedImage: String
@@ -58,17 +62,28 @@ struct ContentView: View {
     
     var body: some View {
         NavigationView {
-            List {
-                
-                ForEach(dataSource.images, id: \.self) { image in
-                    NavigationLink(
-                        destination: DetailView(selectedImage: image)
-                    ) {
-                        Text(image)
-                    }
-                }
+
+// Using ForEach
+//            List {
+//                ForEach(dataSource.images, id: \.self) { image in
+//                    NavigationLink(
+//                        destination: DetailView(selectedImage: image)
+//                    ) {
+//                        Text(image)
+//                    }
+//                }
+//
+//            }.navigationBarTitle(Text("Storm Viewer"))
             
+// Make String Identifiable, don't use ForEach
+            List(dataSource.images) { image in
+                NavigationLink(
+                    destination: DetailView(selectedImage: image)
+                ) {
+                    Text(image)
+                }
             }.navigationBarTitle(Text("Storm Viewer"))
+            
         }
     }
 }
