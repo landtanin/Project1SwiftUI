@@ -33,9 +33,31 @@ class DataSource: ObservableObject {
 
 }
 
+/*
 extension String: Identifiable {
-    public var id: String { self }
+    
+    // not the best
+    /*
+    public var id: UnsafeMutableRawPointer {
+        return Unmanaged.passUnretained(self as AnyObject).toOpaque()
+    }
+    */
+    
+    // not bad
+    /*
+    public var id: String {
+        self
+    }
+    */
+    
+    // not reusable
+    /*
+    public var id: UUID {
+        UUID()
+    }
+    */
 }
+*/
 
 struct DetailView: View {
     @State private var hidesNavBar = false
@@ -63,20 +85,21 @@ struct ContentView: View {
     var body: some View {
         NavigationView {
 
-// Using ForEach
-//            List {
-//                ForEach(dataSource.images, id: \.self) { image in
-//                    NavigationLink(
-//                        destination: DetailView(selectedImage: image)
-//                    ) {
-//                        Text(image)
-//                    }
-//                }
-//
-//            }.navigationBarTitle(Text("Storm Viewer"))
+            // Using ForEach
+            /*
+            List {
+                ForEach(dataSource.images, id: \.self) { image in
+                    NavigationLink(
+                        destination: DetailView(selectedImage: image)
+                    ) {
+                        Text(image)
+                    }
+                }
+
+            }.navigationBarTitle(Text("Storm Viewer"))
+            */
             
-// Make String Identifiable, don't use ForEach
-            List(dataSource.images) { image in
+            List(dataSource.images, id: \.self) { image in
                 NavigationLink(
                     destination: DetailView(selectedImage: image)
                 ) {
